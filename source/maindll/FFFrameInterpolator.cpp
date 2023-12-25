@@ -1,4 +1,7 @@
 #include <numbers>
+#include <fileapi.h>
+#include <string.h>
+#include <winbase.h>
 #include "nvngx.h"
 #include "FFExt.h"
 #include "Util.h"
@@ -455,6 +458,13 @@ FfxErrorCode FFFrameInterpolator::CreateOpticalFlowContext()
 	FfxOpticalflowContextDescription fsrOfDescription = {};
 	fsrOfDescription.backendInterface = FrameInterpolationBackendInterface;
 	fsrOfDescription.flags = 0;
+	char CurrentDirectory[MAX_PATH];
+	GetCurrentDirectoryA(MAX_PATH, CurrentDirectory);
+	if (GetFileAttributes(strcat(CurrentDirectory, "\\RiftApart.exe")) != -1) {
+		//Stutter workaround
+		SwapchainWidth = 1920;
+		SwapchainHeight = 1080;
+	}
 	fsrOfDescription.resolution = { SwapchainWidth, SwapchainHeight };
 	FFX_RETURN_ON_FAIL(ffxOpticalflowContextCreate(&OpticalFlowContext, &fsrOfDescription));
 
